@@ -1,4 +1,4 @@
-package org.dnttr.zephyr.management.bridge;
+package org.dnttr.zephyr.management;
 
 import org.jetbrains.annotations.ApiStatus;
 
