@@ -11,9 +11,8 @@ public class FileReaderTest {
 
     @Test
     public void testReadFile() {
-        FileLoader fileLoader = new FileLoader();
         try {
-            fileLoader.getConfigFile();
+            new FileLoader().walkthrough();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

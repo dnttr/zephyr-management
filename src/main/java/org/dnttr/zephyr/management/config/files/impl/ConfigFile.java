@@ -1,7 +1,6 @@
 package org.dnttr.zephyr.management.config.files.impl;
 
 import lombok.Cleanup;
-import org.dnttr.zephyr.management.config.FileLoader;
 import org.dnttr.zephyr.management.config.files.IFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,14 +17,14 @@ public final class ConfigFile implements IFile<Properties> {
 
     @Override
     public Properties load(@NotNull String path) throws IOException {
-        @Cleanup InputStream inputStream = FileLoader.class.getClassLoader().getResourceAsStream(path);
+        @Cleanup InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
 
-        if (inputStream == null) {
-            throw new FileNotFoundException("Property file '" + path + "' not found in the classpath");
+        if (is == null) {
+            throw new FileNotFoundException("File " + path + " not found");
         }
 
         Properties properties = new Properties();
-        properties.load(inputStream);
+        properties.load(is);
 
         return properties;
     }
