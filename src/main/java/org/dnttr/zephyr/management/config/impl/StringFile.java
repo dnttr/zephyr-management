@@ -1,7 +1,7 @@
-package org.dnttr.zephyr.management.config.files.impl;
+package org.dnttr.zephyr.management.config.impl;
 
 import lombok.Cleanup;
-import org.dnttr.zephyr.management.config.files.IFile;
+import org.dnttr.zephyr.management.config.IFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;

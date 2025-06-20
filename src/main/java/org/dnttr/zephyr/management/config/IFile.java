@@ -1,4 +1,4 @@
-package org.dnttr.zephyr.management.config.files;
+package org.dnttr.zephyr.management.config;
 
 
 import org.jetbrains.annotations.NotNull;
