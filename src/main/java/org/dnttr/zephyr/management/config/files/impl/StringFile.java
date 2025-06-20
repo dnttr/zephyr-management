@@ -7,25 +7,24 @@ import org.jetbrains.annotations.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author dnttr
  */
 
-public final class ConfigFile implements IFile<Properties> {
+public final class StringFile implements IFile<String> {
 
     @Override
-    public Properties load(@NotNull String path) throws IOException {
+    public String load(@NotNull String path) throws IOException {
         @Cleanup InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
 
         if (is == null) {
             throw new FileNotFoundException("File " + path + " not found");
         }
 
-        Properties properties = new Properties();
-        properties.load(is);
+        byte[] bytes = is.readAllBytes();
 
-        return properties;
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }

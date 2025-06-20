@@ -5,4 +5,6 @@ package org.dnttr.zephyr.bridge.internal;
  */
 
 public final class ZMKit {
+
+    public native int push(String name, String source);
 }

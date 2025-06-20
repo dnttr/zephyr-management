@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface IFile<R> {
 
-    public R load(@NotNull String path) throws IOException;
+    R load(@NotNull String path) throws IOException;
 }

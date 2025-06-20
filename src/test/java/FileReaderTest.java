@@ -12,7 +12,7 @@ public class FileReaderTest {
     @Test
     public void testReadFile() {
         try {
-            new FileLoader().walkthrough();
+            new FileLoader();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
