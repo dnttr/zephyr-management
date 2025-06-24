@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * @author dnttr
  */
 
-public final class StringFile implements IFile<String> {
+public final class ShaderFile implements IFile<String> {
 
     @Override
     public String load(@NotNull String path) throws IOException {
