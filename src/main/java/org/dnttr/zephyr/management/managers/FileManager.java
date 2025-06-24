@@ -27,5 +27,6 @@ public class FileManager {
 
     public void push() {
         this.shaders.forEach(ZAKit::ffi_zm_push_shader);
+        ZAKit.ffi_zm_finish_loading();
     }
 }
