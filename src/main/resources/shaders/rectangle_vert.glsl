@@ -4,7 +4,10 @@ layout (location = 0) in vec3 aPos;
 
 uniform mat4 projection_matrix;
 
+out vec2 coords;
+
 void main()
 {
     gl_Position = projection_matrix * vec4(aPos, 1.0);
+    coords = aPos.xy;
 }
