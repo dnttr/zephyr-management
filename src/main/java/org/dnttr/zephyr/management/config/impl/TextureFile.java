@@ -1,6 +1,7 @@
 package org.dnttr.zephyr.management.config.impl;
 
 import lombok.Cleanup;
+import org.dnttr.zephyr.management.Texture;
 import org.dnttr.zephyr.management.config.IFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,10 +17,10 @@ import java.nio.ByteBuffer;
  * @author dnttr
  */
 
-public class TextureFile implements IFile<ByteBuffer> {
+public class TextureFile implements IFile<Texture> {
 
     @Override
-    public ByteBuffer load(@NotNull String path) throws IOException {
+    public Texture load(@NotNull String path) throws IOException {
         @Cleanup InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
 
         if (is == null) {
@@ -33,6 +34,9 @@ public class TextureFile implements IFile<ByteBuffer> {
         argbImage.getGraphics().drawImage(img, 0, 0, null);
 
         int[] pixels = ((DataBufferInt) argbImage.getRaster().getDataBuffer()).getData();
+
+        System.out.println("Image has alpha: " + img.getColorModel().hasAlpha());
+        System.out.println("Image transparency: " + img.getTransparency());
 
         for (int y = 0; y < img.getHeight(); y++) {
             for (int x = 0; x < img.getWidth(); x++) {
@@ -51,6 +55,6 @@ public class TextureFile implements IFile<ByteBuffer> {
         }
 
         buffer.flip();
-        return buffer;
+        return new Texture(buffer, img.getWidth(), img.getHeight());
     }
 }
