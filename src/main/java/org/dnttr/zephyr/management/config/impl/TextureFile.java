@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
  * @author dnttr
  */
 
-public class TextureFile implements IFile<Texture> {
+public final class TextureFile implements IFile<Texture> {
 
     @Override
     public Texture load(@NotNull String path) throws IOException {
@@ -34,9 +34,6 @@ public class TextureFile implements IFile<Texture> {
         argbImage.getGraphics().drawImage(img, 0, 0, null);
 
         int[] pixels = ((DataBufferInt) argbImage.getRaster().getDataBuffer()).getData();
-
-        System.out.println("Image has alpha: " + img.getColorModel().hasAlpha());
-        System.out.println("Image transparency: " + img.getTransparency());
 
         for (int y = 0; y < img.getHeight(); y++) {
             for (int x = 0; x < img.getWidth(); x++) {
