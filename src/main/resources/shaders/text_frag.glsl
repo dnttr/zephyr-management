@@ -5,20 +5,19 @@ out vec4 FragColor;
 
 uniform sampler2D fontAtlas;
 uniform vec4 textColor;
-uniform vec4 outlineColor = vec4(0.0, 0.0, 0.0, 0.5);
-uniform vec4 shadowColor = vec4(0.0, 0.0, 0.0, 0.5);
-uniform float smoothing = 0.1;
-uniform float outlineWidth = 0.0;  // Set to 0 to disable outline
-uniform vec2 shadowOffset = vec2(0.0, 0.0);  // Set to 0,0 to disable shadow
+uniform vec4 outlineColor;
+uniform vec4 shadowColor;
+uniform float smoothing;
+uniform float outlineWidth;
+uniform vec2 shadowOffset;
 
 void main()
 {
     float distance = texture(fontAtlas, TexCoords).r;
 
-    if (distance < 0.01 && outlineWidth == 0.0 && shadowOffset == vec2(0.0, 0.0))
-        discard;
-
     float textAlpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
+    if (textAlpha < 0.01 && outlineWidth == 0.0 && shadowOffset == vec2(0.0, 0.0))
+    discard;
 
     vec4 finalColor = vec4(0.0);
 
@@ -30,27 +29,32 @@ void main()
 
     if (outlineWidth > 0.0) {
         float outline = 0.0;
-        const int samples = 4;
-        const float step = outlineWidth / float(samples);
+        int samples = 16;
+        float stepSize = outlineWidth / float(samples);
+        vec2 texSize = vec2(textureSize(fontAtlas, 0));
 
         for (int i = 1; i <= samples; i++) {
-            float w = step * float(i);
-            outline = max(outline, texture(fontAtlas, TexCoords + vec2(w, 0.0)).r);
-            outline = max(outline, texture(fontAtlas, TexCoords + vec2(-w, 0.0)).r);
-            outline = max(outline, texture(fontAtlas, TexCoords + vec2(0.0, w)).r);
-            outline = max(outline, texture(fontAtlas, TexCoords + vec2(0.0, -w)).r);
+            float radius = stepSize * float(i);
+
+            for (int j = 0; j < 16; j++) {
+                float angle = 6.2831853 * float(j) / 8.0;
+                vec2 offset = vec2(cos(angle), sin(angle)) * radius / texSize;
+                float sampleValue = texture(fontAtlas, TexCoords + offset).r;
+                outline = max(outline, sampleValue);
+            }
         }
 
         float outlineAlpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, outline) * outlineColor.a;
-        outlineAlpha = min(outlineAlpha, 1.0 - textAlpha); // Prevent outline from drawing over text
+        outlineAlpha = min(outlineAlpha, 1.0 - textAlpha);
 
         finalColor = mix(finalColor, outlineColor, outlineAlpha);
     }
 
     finalColor = mix(finalColor, textColor, textAlpha);
 
-    if (finalColor.a < 0.01)
+    if (finalColor.a < 0.01) {
         discard;
+    }
 
     FragColor = finalColor;
 }

@@ -45,6 +45,8 @@ public class FileManager {
         this.shaders.put("text_vert", shaderFile.load("shaders/text_vert.glsl"));
 
         this.fonts.put("Roboto_Condensed-Medium", fontFile.load("fonts/Roboto_Condensed-Medium.ttf"));
+        this.fonts.put("Roboto-VariableFont", fontFile.load("fonts/Roboto-VariableFont.ttf"));
+        this.fonts.put("Roboto-Regular", fontFile.load("fonts/Roboto-Regular.ttf"));
     }
 
     public void push() {
