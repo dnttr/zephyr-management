@@ -4,22 +4,19 @@ out vec4 FragColor;
 in vec2 coords;
 
 uniform vec3 shape_color;
-
-uniform vec2 shape_position;
-uniform vec2 rectangle_size;
-
-uniform float rectangle_radius;
 uniform float shape_opacity;
 
+uniform vec2 shape_position;
+uniform float shape_radius;
+uniform vec2 shape_size;
+
 void main() {
-    vec2 pos = coords - shape_position;
+    vec2 position = coords - shape_position;
+    vec2 distance = abs(position - shape_size * 0.5) - (shape_size * 0.5) + vec2(shape_radius);
 
-    vec2 dist = abs(pos - rectangle_size * 0.5) - (rectangle_size * 0.5) + vec2(rectangle_radius);
-    float d = length(max(dist, 0.0)) - rectangle_radius;
-
-    float edgeWidth = clamp(fwidth(d) * 1.5, 0.5, 3.0);
-
-    float alpha = 1.0 - smoothstep(0.0, edgeWidth, d);
+    float d = length(max(distance, 0.0)) - shape_radius;
+    float edge_width = clamp(fwidth(d) * 1.5, 0.5, 3.0);
+    float alpha = 1.0 - smoothstep(0.0, edge_width, d);
 
     if (alpha < 0.001) {
         discard;

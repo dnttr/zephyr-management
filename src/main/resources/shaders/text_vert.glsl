@@ -15,7 +15,7 @@ uniform float begin_text_scale;
 uniform float end_text_scale;
 uniform float speed_text_scale;
 
-uniform mat4 projection;
+uniform mat4 projection_matrix;
 
 uniform float time;
 
@@ -27,6 +27,6 @@ void main()
 
     float scale = min(end_text_scale, begin_text_scale + time * speed_text_scale);
 
-    gl_Position = projection * vec4(r_text_position * scale, 0.0, 1.0);
+    gl_Position = projection_matrix * vec4(r_text_position * scale, 0.0, 1.0);
     tex_coords = r_tex_coords;
 }
