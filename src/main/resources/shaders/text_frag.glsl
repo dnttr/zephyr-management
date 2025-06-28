@@ -14,6 +14,7 @@ uniform int useEffects;
 uniform int totalChars;
 uniform float variation;
 uniform vec2 position;
+uniform float saturation;
 
 flat in int charIndex;
 
@@ -68,7 +69,7 @@ void main()
         float baseHue = float(charIndex) / float(totalChars);
         float shift = TexCoords.x;
         float hue = fract(baseHue + (position.x / 100) * shift * variation);
-        vec3 rainbowColor = hsv2rgb(vec3(hue, 0.5, 1.0));
+        vec3 rainbowColor = hsv2rgb(vec3(hue, saturation, 1.0));
         effectTextColor = vec4(rainbowColor, 1.0);
     }
 
