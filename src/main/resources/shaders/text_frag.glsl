@@ -12,7 +12,8 @@ uniform float outlineWidth;
 uniform vec2 shadowOffset;
 uniform int useEffects;
 uniform int totalChars;
-uniform int variation;
+uniform float variation;
+uniform vec2 position;
 
 flat in int charIndex;
 
@@ -64,8 +65,10 @@ void main()
 
     vec4 effectTextColor = textColor;
     if (useEffects != 0) {
-        float hue = float(charIndex) / float(totalChars);
-        vec3 rainbowColor = hsv2rgb(vec3(hue, 1.0, 1.0));
+        float baseHue = float(charIndex) / float(totalChars);
+        float shift = TexCoords.x;
+        float hue = fract(baseHue + (position.x / 100) * shift * variation);
+        vec3 rainbowColor = hsv2rgb(vec3(hue, 0.5, 1.0));
         effectTextColor = vec4(rainbowColor, 1.0);
     }
 
