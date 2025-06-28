@@ -10,14 +10,26 @@ uniform vec4 shadowColor;
 uniform float smoothing;
 uniform float outlineWidth;
 uniform vec2 shadowOffset;
+uniform int useEffects;
+uniform int totalChars;
+uniform int variation;
+
+flat in int charIndex;
+
+vec3 hsv2rgb(vec3 c) {
+    vec4 K = vec4(1., 2./3., 1./3., 3.);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6. - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0., 1.), c.y);
+}
 
 void main()
 {
     float distance = texture(fontAtlas, TexCoords).r;
 
     float textAlpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
+
     if (textAlpha < 0.01 && outlineWidth == 0.0 && shadowOffset == vec2(0.0, 0.0))
-    discard;
+        discard;
 
     vec4 finalColor = vec4(0.0);
 
@@ -37,7 +49,7 @@ void main()
             float radius = stepSize * float(i);
 
             for (int j = 0; j < 16; j++) {
-                float angle = 6.2831853 * float(j) / 8.0;
+                float angle = 6.2831853 * float(j) / 16.0;
                 vec2 offset = vec2(cos(angle), sin(angle)) * radius / texSize;
                 float sampleValue = texture(fontAtlas, TexCoords + offset).r;
                 outline = max(outline, sampleValue);
@@ -50,7 +62,14 @@ void main()
         finalColor = mix(finalColor, outlineColor, outlineAlpha);
     }
 
-    finalColor = mix(finalColor, textColor, textAlpha);
+    vec4 effectTextColor = textColor;
+    if (useEffects != 0) {
+        float hue = float(charIndex) / float(totalChars);
+        vec3 rainbowColor = hsv2rgb(vec3(hue, 1.0, 1.0));
+        effectTextColor = vec4(rainbowColor, 1.0);
+    }
+
+    finalColor = mix(finalColor, effectTextColor, textAlpha);
 
     if (finalColor.a < 0.01) {
         discard;
