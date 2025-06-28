@@ -23,6 +23,7 @@ uniform float glowRadius;
 uniform float glowIntensity;
 uniform vec4 glowColor;
 
+flat in float revealAlpha;
 flat in int charIndex;
 
 vec3 hsv2rgb(vec3 c) {
@@ -85,6 +86,8 @@ void main()
     }
 
     finalColor = mix(finalColor, effectTextColor, textAlpha);
+
+    finalColor.a *= revealAlpha;
 
     if (finalColor.a < 0.01) {
         discard;
