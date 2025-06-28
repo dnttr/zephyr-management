@@ -18,6 +18,11 @@ uniform float saturation;
 uniform float time;
 uniform float speed;
 
+uniform int useGlow;
+uniform float glowRadius;
+uniform float glowIntensity;
+uniform vec4 glowColor;
+
 flat in int charIndex;
 
 vec3 hsv2rgb(vec3 c) {
@@ -29,11 +34,7 @@ vec3 hsv2rgb(vec3 c) {
 void main()
 {
     float distance = texture(fontAtlas, TexCoords).r;
-
     float textAlpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
-
-    if (textAlpha < 0.01 && outlineWidth == 0.0 && shadowOffset == vec2(0.0, 0.0))
-        discard;
 
     vec4 finalColor = vec4(0.0);
 
@@ -41,6 +42,14 @@ void main()
         float shadowDistance = texture(fontAtlas, TexCoords - shadowOffset / textureSize(fontAtlas, 0)).r;
         float shadowAlpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, shadowDistance) * shadowColor.a;
         finalColor = mix(finalColor, shadowColor, shadowAlpha);
+    }
+
+    if (useGlow != 0 && glowRadius > 0.0) {
+        float glowDist = smoothstep(0.5 - glowRadius, 0.5, distance);
+        float glow = glowDist * (1.0 - textAlpha) * glowIntensity;
+
+        finalColor.rgb = mix(finalColor.rgb, glowColor.rgb, glow * glowColor.a);
+        finalColor.a = max(finalColor.a, glow * glowColor.a);
     }
 
     if (outlineWidth > 0.0) {
