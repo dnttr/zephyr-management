@@ -1,30 +1,32 @@
 #version 330 core
 
-layout (location = 0) in vec2 position;
-layout (location = 1) in vec2 texCoord;
-layout(location = 2) in float characterIndex;
+layout (location = 0) in vec2 r_text_position;
+layout (location = 1) in vec2 r_tex_coords;
+layout(location = 2) in float r_character_index;
 
-flat out int charIndex;
-flat out float revealAlpha;
-out vec2 TexCoords;
+out vec2 tex_coords;
 
-uniform float time;
-uniform float maxScale;
-uniform float startingScale;
-uniform float speedScaling;
+flat out int character_index;
+flat out int characters_amount;
+
+uniform int total_characters_amount;
+
+uniform float begin_text_scale;
+uniform float end_text_scale;
+uniform float speed_text_scale;
+
 uniform mat4 projection;
 
-uniform float revealSpeed;
-uniform int revealDirection;
-uniform int totalChars;
+uniform float time;
 
+///todo: reveal animation
 void main()
-{//todo: reveal animation
-    charIndex = int(characterIndex);
-    float charOffset = float(charIndex) * 0.2f;
-    float scale = min(maxScale, startingScale + time * speedScaling);
-    vec2 finalPosition = position;
+{
+    character_index = int(r_character_index);
+    characters_amount = total_characters_amount;
 
-    gl_Position = projection * vec4(finalPosition * scale, 0.0, 1.0);
-    TexCoords = texCoord;
+    float scale = min(end_text_scale, begin_text_scale + time * speed_text_scale);
+
+    gl_Position = projection * vec4(r_text_position * scale, 0.0, 1.0);
+    tex_coords = r_tex_coords;
 }
