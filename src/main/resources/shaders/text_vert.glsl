@@ -9,15 +9,17 @@ out vec2 tex_coords;
 flat out int character_index;
 flat out int characters_amount;
 
-uniform int total_characters_amount;
-
-uniform float begin_text_scale;
-uniform float end_text_scale;
-uniform float speed_text_scale;
-
-uniform mat4 projection_matrix;
-
-uniform float time;
+layout (std140) uniform transform_properties
+{
+    mat4 projection_matrix;
+    float time;
+    int total_characters_amount;
+    float begin_text_scale;
+    float end_text_scale;
+    float speed_text_scale;
+    float _padding1;
+    float _padding2;
+};
 
 ///todo: reveal animation
 void main()

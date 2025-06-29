@@ -7,30 +7,33 @@ in vec2 tex_coords;
 flat in int character_index;
 flat in int characters_amount;
 
-uniform float time;
-uniform float smoothing;
+layout (std140) uniform text_properties
+{
+    float time;
+    float smoothing;
+    vec2 text_position;
+    vec4 text_color;
+
+    int text_shadow_enable;
+    vec4 text_shadow_color;
+    vec2 text_shadow_offset;
+
+    int text_outline_enable;
+    vec4 text_outline_color;
+    float text_outline_width;
+
+    int text_glow_enable;
+    float text_glow_radius;
+    float text_glow_intensity;
+    vec4 text_glow_color;
+
+    int text_rainbow_enable;
+    float text_rainbow_speed;
+    float text_rainbow_variation;
+    float text_rainbow_saturation;
+};
+
 uniform sampler2D atlas;
-
-uniform vec2 text_position;
-uniform vec4 text_color;
-
-uniform int text_shadow_enable;
-uniform vec4 text_shadow_color;
-uniform vec2 text_shadow_offset;
-
-uniform int text_outline_enable;
-uniform vec4 text_outline_color;
-uniform float text_outline_width;
-
-uniform int text_glow_enable;
-uniform float text_glow_radius;
-uniform float text_glow_intensity;
-uniform vec4 text_glow_color;
-
-uniform int text_rainbow_enable;
-uniform float text_rainbow_speed;
-uniform float text_rainbow_variation;
-uniform float text_rainbow_saturation;
 
 vec3 hsv2rgb(vec3 hsv_color) { // i have no damn idea how this works, lets just leave it
     vec4 hue_offsets = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
