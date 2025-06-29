@@ -9,16 +9,19 @@ out vec2 tex_coords;
 flat out int character_index;
 flat out int characters_amount;
 
+flat out float f_scale;
+
 layout (std140) uniform transform_properties
 {
     mat4 projection_matrix;
     float time;
     int total_characters_amount;
-    float begin_text_scale;
-    float end_text_scale;
-    float speed_text_scale;
-    float _padding1;
-    float _padding2;
+    float text_animation_begin;
+    float text_animation_end;
+    float text_animation_speed;
+
+
+    float text_magnification;
 };
 
 ///todo: reveal animation
@@ -27,8 +30,10 @@ void main()
     character_index = int(r_character_index);
     characters_amount = total_characters_amount;
 
-    float scale = min(end_text_scale, begin_text_scale + time * speed_text_scale);
+    float scale = min(text_animation_end, text_animation_begin + time * text_animation_speed);
 
-    gl_Position = projection_matrix * vec4(r_text_position * scale, 0.0, 1.0);
+    vec2 final_position = r_text_position * scale * text_magnification;
+    gl_Position = projection_matrix * vec4(final_position, 0.0, 1.0);
+
     tex_coords = r_tex_coords;
 }

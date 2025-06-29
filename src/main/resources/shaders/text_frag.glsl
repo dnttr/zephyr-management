@@ -42,9 +42,9 @@ vec3 hsv2rgb(vec3 hsv_color) { // i have no damn idea how this works, lets just 
     return hsv_color.z * mix(vec3(1.0), clamp(hue_positions - vec3(1.0), 0.0, 1.0), hsv_color.y);
 }
 
-vec4 apply_shadow(vec4 current_color) {
+vec4 apply_shadow(vec4 current_color, float adjusted_smoothing) {
     float show_distance = texture(atlas, tex_coords - text_shadow_offset / textureSize(atlas, 0)).r;
-    float show_alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, show_distance) * text_shadow_color.a;
+    float show_alpha = smoothstep(0.5 - adjusted_smoothing, 0.5 + adjusted_smoothing, show_distance) * text_shadow_color.a;
 
     return mix(current_color, text_shadow_color, show_alpha);
 }
@@ -61,7 +61,7 @@ vec4 apply_glow(vec4 current_color, float text_alpha, float distance) {
     return result;
 }
 
-vec4 apply_outline(vec4 current_color, float text_alpha) {
+vec4 apply_outline(vec4 current_color, float text_alpha, float adjusted_smoothing) {
     float outline = 0.0;
     int samples = 16;
 
@@ -80,7 +80,7 @@ vec4 apply_outline(vec4 current_color, float text_alpha) {
         }
     }
 
-    float outline_alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, outline) * text_outline_color.a;
+    float outline_alpha = smoothstep(0.5 - adjusted_smoothing, 0.5 + adjusted_smoothing, outline) * text_outline_color.a;
     outline_alpha = min(outline_alpha, 1.0 - text_alpha);
 
     return mix(current_color, text_outline_color, outline_alpha);
@@ -99,12 +99,13 @@ vec4 apply_rainbow(vec4 current_color) {
 void main()
 {
     float distance = texture(atlas, tex_coords).r;
-    float text_alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
+    float adjusted_smoothing = fwidth(distance);
+    float text_alpha = smoothstep(0.5 - adjusted_smoothing, 0.5 + adjusted_smoothing, distance);
 
     vec4 final_color = vec4(0.0);
 
     if (text_shadow_enable != 0) {
-        final_color = apply_shadow(final_color);
+        final_color = apply_shadow(final_color, adjusted_smoothing);
     }
 
     if (text_glow_enable != 0) {
@@ -112,7 +113,7 @@ void main()
     }
 
     if (text_outline_enable != 0) {
-        final_color = apply_outline(final_color, text_alpha);
+        final_color = apply_outline(final_color, text_alpha, adjusted_smoothing);
     }
 
     vec4 final_text_color = text_color;
