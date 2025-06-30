@@ -43,6 +43,8 @@ public class FileManager {
         this.shaders.put("texture_vert", shaderFile.load("shaders/texture_vert.glsl"));
         this.shaders.put("text_frag", shaderFile.load("shaders/text_frag.glsl"));
         this.shaders.put("text_vert", shaderFile.load("shaders/text_vert.glsl"));
+        this.shaders.put("effect_frag", shaderFile.load("shaders/effect_frag.glsl"));
+        this.shaders.put("effect_vert", shaderFile.load("shaders/effect_vert.glsl"));
 
         this.fonts.put("Roboto_Condensed-Medium", fontFile.load("fonts/Roboto_Condensed-Medium.ttf"));
         this.fonts.put("Roboto-VariableFont", fontFile.load("fonts/Roboto-VariableFont.ttf"));
