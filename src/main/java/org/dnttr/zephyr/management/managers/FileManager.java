@@ -49,6 +49,10 @@ public class FileManager {
         this.shaders.put("line_vert", shaderFile.load("shaders/line_vert.glsl"));
         this.shaders.put("fs_blur_frag", shaderFile.load("shaders/fs_blur_frag.glsl"));
         this.shaders.put("fs_blur_vert", shaderFile.load("shaders/fs_blur_vert.glsl"));
+        this.shaders.put("partial_blur_frag", shaderFile.load("shaders/partial_blur_frag.glsl"));
+        this.shaders.put("partial_blur_vert",  shaderFile.load("shaders/partial_blur_vert.glsl"));
+        this.shaders.put("passthrough_frag", shaderFile.load("shaders/passthrough_frag.glsl"));
+        this.shaders.put("passthrough_vert", shaderFile.load("shaders/passthrough_vert.glsl"));
 
         this.fonts.put("Roboto_Condensed-Medium", fontFile.load("fonts/Roboto_Condensed-Medium.ttf"));
         this.fonts.put("Roboto-VariableFont", fontFile.load("fonts/Roboto-VariableFont.ttf"));
