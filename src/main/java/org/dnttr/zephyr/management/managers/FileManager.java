@@ -36,6 +36,7 @@ public class FileManager {
         var fontFile = new FontFile();
 
         this.textures.put("test.png", textureFile.load("textures/test.png"));
+        this.textures.put("avatar.png", textureFile.load("textures/avatar.png"));
 
         this.shaders.put("rectangle_vert", shaderFile.load("shaders/rectangle_vert.glsl"));
         this.shaders.put("rectangle_frag", shaderFile.load("shaders/rectangle_frag.glsl"));
@@ -57,6 +58,7 @@ public class FileManager {
         this.fonts.put("Roboto_Condensed-Medium", fontFile.load("fonts/Roboto_Condensed-Medium.ttf"));
         this.fonts.put("Roboto-VariableFont", fontFile.load("fonts/Roboto-VariableFont.ttf"));
         this.fonts.put("Roboto-Regular", fontFile.load("fonts/Roboto-Regular.ttf"));
+        this.fonts.put("Roboto-Medium", fontFile.load("fonts/Roboto-Medium.ttf"));
     }
 
     public void push() {
