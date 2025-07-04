@@ -113,10 +113,10 @@ public class InterProcessClient {
 
                         try {
                             Thread.sleep(50);
+                            System.exit(0);
                         } catch (InterruptedException _) {
                         }
 
-                        System.exit(0);
                     } else if (command.startsWith("CONNECT_NETTY:")) {
                         handleNettyConnection(command);
                     }
