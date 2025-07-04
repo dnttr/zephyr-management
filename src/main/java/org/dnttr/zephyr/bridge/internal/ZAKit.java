@@ -3,6 +3,9 @@ package org.dnttr.zephyr.bridge.internal;
 import org.dnttr.zephyr.network.loader.api.client.Client;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -43,7 +46,20 @@ public final class ZAKit {
         }
 
         if (!shutdownHookRegistered) {
-            Runtime.getRuntime().addShutdownHook(new Thread(ZAKit::disconnect, "ZKSH"));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+                ThreadInfo[] threadInfos = threadBean.getThreadInfo(threadBean.getAllThreadIds());
+
+                System.out.println("=== ALL THREADS ===");
+                for (ThreadInfo info : threadInfos) {
+                    if (info != null) {
+                        Thread.State state = info.getThreadState();
+                        System.out.println("Thread: " + info.getThreadName() +
+                                " | State: " + state +
+                                " | Daemon: " + threadBean.getThreadInfo(info.getThreadId()).getThreadName());
+                    }
+                }
+            }, "ZKSH"));
             shutdownHookRegistered = true;
         }
 
@@ -71,31 +87,7 @@ public final class ZAKit {
             }
         });
 
+        clientOperationThread.setDaemon(true);
         clientOperationThread.start();
-    }
-
-    public static void disconnect() {
-        synchronized (ZAKit.class) {
-            if (activeClient != null) {
-                try {
-                    activeClient.destroy();
-                    activeClient = null;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (clientOperationThread != null && clientOperationThread.isAlive()) {
-                try {
-                    clientOperationThread.join(5000);
-                    if (clientOperationThread.isAlive()) {
-                        clientOperationThread.interrupt();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            clientOperationThread = null;
-        }
     }
 }
