@@ -1,20 +1,19 @@
 package org.dnttr.zephyr.management.managers;
 
 import lombok.Getter;
-import org.dnttr.zephyr.bridge.internal.ZAKit;
+import org.dnttr.zephyr.bridge.ipc.InterProcessClient;
 import org.dnttr.zephyr.management.Texture;
 import org.dnttr.zephyr.management.config.impl.FontFile;
 import org.dnttr.zephyr.management.config.impl.ShaderFile;
 import org.dnttr.zephyr.management.config.impl.TextureFile;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 /**
  * @author dnttr
  */
- 
+
 public class FileManager {
 
     @Getter
@@ -62,10 +61,18 @@ public class FileManager {
     }
 
     public void push() {
-        this.shaders.forEach(ZAKit::ffi_zm_push_shader);
-        this.fonts.forEach(ZAKit::ffi_zm_push_font);
-        this.textures.forEach((name, texture) -> ZAKit.ffi_zm_push_texture(name, texture.buffer(),  texture.width(), texture.height()));
+        System.err.println("[FileManager] Pushing shaders to C++...");
+        this.shaders.forEach(InterProcessClient::pushShader);
 
-        ZAKit.ffi_zm_finish_loading();
+        System.err.println("[FileManager] Pushing fonts to C++...");
+        this.fonts.forEach(InterProcessClient::pushFont);
+
+        System.err.println("[FileManager] Pushing textures to C++...");
+        this.textures.forEach((name, texture) -> InterProcessClient.pushTexture(name, texture.buffer(),  texture.width(), texture.height()));
+
+        System.err.println("[FileManager] Signaling finish loading to C++...");
+        InterProcessClient.finishLoading();
+
+        System.err.println("[FileManager] All push commands sent.");
     }
 }

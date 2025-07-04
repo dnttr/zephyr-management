@@ -52,6 +52,9 @@ public final class TextureFile implements IFile<Texture> {
         }
 
         buffer.flip();
-        return new Texture(buffer, img.getWidth(), img.getHeight());
+        byte[] arr = new byte[buffer.remaining()];
+        buffer.get(arr);
+
+        return new Texture(arr, img.getWidth(), img.getHeight());
     }
 }
