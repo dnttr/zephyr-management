@@ -68,8 +68,58 @@ public class InterProcessClient {
         Thread outboundSenderThread = getOutboundSenderThread();
         Thread inboundListenerThread = getInboundListenerThread();
 
+        Runtime.getRuntime().addShutdownHook(Thread.startVirtualThread(Thread.ofVirtual().name("Daemon-Shutdown-Hook").unstarted(() -> {
+            running = false;
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                outboundSenderThread.join(5000);
+                if (outboundSenderThread.isAlive()) {
+                    System.out.println("[Daemon] Outbound sender thread did not exit in time.");
+                }
+
+                inboundListenerThread.join(5000);
+                if (inboundListenerThread.isAlive()) {
+                    System.out.println("[Daemon] Inbound listener thread did not exit in time.");
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (activeClient != null) {
+                    activeClient.destroy();
+                }
+
+                if (dataIn != null) {
+                    dataIn.close();
+                }
+
+                if (dataOut != null) {
+                    dataOut.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        })));
+
         outboundSenderThread.start();
         inboundListenerThread.start();
+
+        while (running) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("[Daemon] Main thread interrupted. Signaling exit.");
+                running = false;
+            }
+        }
     }
 
     private static @NotNull Thread getInboundListenerThread() {
@@ -110,13 +160,6 @@ public class InterProcessClient {
                         }
 
                         sendMessage("DAEMON_SHUTDOWN_ACK");
-
-                        try {
-                            Thread.sleep(50);
-                            System.exit(0);
-                        } catch (InterruptedException _) {
-                        }
-
                     } else if (command.startsWith("CONNECT_NETTY:")) {
                         handleNettyConnection(command);
                     }
